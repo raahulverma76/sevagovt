@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice-Navigated Community Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 min-h-screen flex items-center justify-center p-0 sm:py-6">
+
+    <!-- MOBILE APP CONTAINER FRAME -->
+    <div class="w-full max-w-md bg-slate-50 min-h-screen sm:min-h-[850px] sm:rounded-3xl shadow-2xl flex flex-col justify-between relative overflow-hidden border-0 sm:border-8 sm:border-slate-800">
+
+        <!-- TOP SECTION: TWO ROUND BUTTONS (NO HEADER BAR) -->
+        <header class="pt-6 px-6 pb-2 flex justify-between items-center bg-transparent">
+            <!-- Register as Worker (Round Button) -->
+            <button onclick="openModal('workerModal')" class="flex flex-col items-center group focus:outline-none">
+                <div class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                    <i class="fa-solid fa-user-tie text-lg"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 mt-1">Worker Reg</span>
+            </button>
+
+            <div class="text-center">
+                <span class="text-xs font-extrabold tracking-wider text-indigo-600 uppercase">SevaVoice</span>
+            </div>
+
+            <!-- Shop / Business Register (Round Button) -->
+            <button onclick="openModal('businessModal')" class="flex flex-col items-center group focus:outline-none">
+                <div class="w-14 h-14 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                    <i class="fa-solid fa-store text-lg"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 mt-1">Shop Reg</span>
+            </button>
+        </header>
+
+        <!-- MAIN SCROLLABLE APP CONTENT -->
+        <main class="px-5 py-4 flex flex-col items-center text-center space-y-6 flex-grow overflow-y-auto">
+
+            <!-- HERO SECTION & CENTRAL AUDIO BUTTON -->
+            <section class="w-full space-y-3 mt-2">
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">What do you need today?</h1>
+                <p class="text-slate-500 text-xs px-4">Tap the circle and speak. E.g., <span class="italic text-indigo-600 font-semibold">"I need a driver"</span> or <span class="italic text-indigo-600 font-semibold">"Show community halls"</span>.</p>
+                
+                <!-- Central Audio Button -->
+                <div class="relative inline-block my-4">
+                    <div id="pulseRing" class="absolute -inset-3 rounded-full bg-indigo-400 opacity-0 animate-ping"></div>
+                    <button id="audioSearchBtn" onclick="toggleVoiceSearch()" class="relative z-10 w-28 h-28 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-xl flex flex-col items-center justify-center transition transform active:scale-95 focus:outline-none">
+                        <i id="micIcon" class="fa-solid fa-microphone text-3xl mb-1"></i>
+                        <span id="micText" class="text-[10px] font-bold uppercase tracking-wider">Tap & Speak</span>
+                    </button>
+                </div>
+
+                <!-- Voice Feedback Output Box -->
+                <div id="outputBox" class="hidden bg-indigo-50 border border-indigo-200 text-indigo-900 px-3 py-2 rounded-xl text-xs font-medium shadow-inner">
+                    Listening... Speak your command.
+                </div>
+            </section>
+
+            <!-- FREE SERVICES IN YOUR AREA (ROUND BUTTONS) -->
+            <section class="w-full bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <h2 class="text-sm font-bold text-slate-900 mb-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-hands-holding-child text-amber-500"></i> Free Services in Your Area
+                </h2>
+                
+                <div class="grid grid-cols-3 gap-3">
+                    <!-- Community Halls -->
+                    <button onclick="navigateTo('community-halls')" class="group flex flex-col items-center p-2 rounded-xl hover:bg-slate-50 transition">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-lg mb-2 shadow-sm group-hover:scale-105 transition">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-[11px] leading-tight">Community Halls</span>
+                    </button>
+
+                    <!-- Social Food Service -->
+                    <button onclick="navigateTo('food-service')" class="group flex flex-col items-center p-2 rounded-xl hover:bg-slate-50 transition">
+                        <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-lg mb-2 shadow-sm group-hover:scale-105 transition">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-[11px] leading-tight">Social Food</span>
+                    </button>
+
+                    <!-- Government Free Services -->
+                    <button onclick="navigateTo('gov-services')" class="group flex flex-col items-center p-2 rounded-xl hover:bg-slate-50 transition">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-lg mb-2 shadow-sm group-hover:scale-105 transition">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-[11px] leading-tight">Govt Services</span>
+                    </button>
+                </div>
+
+                <!-- List Free Seva Button -->
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <button onclick="openModal('sevaModal')" class="w-full text-center text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-xl font-medium transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-circle-plus text-indigo-600"></i>
+                        <span>List Your Free Seva Here</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ALL INDIA HELPLINES & GOVT PORTALS -->
+            <section class="w-full bg-slate-900 text-white rounded-2xl p-4 shadow-md flex items-center justify-between">
+                <div class="text-left pr-2">
+                    <h3 class="text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-phone-volume text-emerald-400"></i> All-India Helplines
+                    </h3>
+                    <p class="text-[10px] text-slate-300 mt-0.5">Emergency & Govt websites directory</p>
+                </div>
+                <button onclick="openModal('helplineModal')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-2 rounded-xl text-[11px] transition shadow flex-shrink-0">
+                    Open Hub
+                </button>
+            </section>
+
+        </main>
+
+        <!-- APP FOOTER BAR -->
+        <footer class="bg-white border-t border-slate-200 py-3 text-center text-[10px] text-slate-400">
+            SevaVoice Mobile App &copy; 2026
+        </footer>
+
+    </div>
+
+    <!-- MODAL POPUP -->
+    <div id="appModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-left">
+            <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 text-base">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const audioSearchBtn = document.getElementById('audioSearchBtn');
+        const micIcon = document.getElementById('micIcon');
+        const micText = document.getElementById('micText');
+        const outputBox = document.getElementById('outputBox');
+        const pulseRing = document.getElementById('pulseRing');
+
+        let isListening = false;
+        let recognition = null;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-IN';
+
+            recognition.onstart = function() {
+                isListening = true;
+                micIcon.className = "fa-solid fa-waveform text-3xl mb-1 animate-pulse text-white";
+                micText.innerText = "Listening...";
+                pulseRing.classList.remove('opacity-0');
+                outputBox.classList.remove('hidden');
+                outputBox.innerText = "Listening to your request...";
+            };
+
+            recognition.onresult = function(event) {
+                const speechToText = event.results[0][0].transcript.toLowerCase();
+                outputBox.innerText = `You said: "${speechToText}"`;
+                handleVoiceIntent(speechToText);
+            };
+
+            recognition.onerror = function() {
+                outputBox.innerText = "Error recognizing speech. Try again.";
+                stopListeningState();
+            };
+
+            recognition.onend = function() {
+                stopListeningState();
+            };
+        }
+
+        function toggleVoiceSearch() {
+            if (!recognition) {
+                alert("Speech recognition is not supported in this browser. Please use Chrome.");
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function stopListeningState() {
+            isListening = false;
+            micIcon.className = "fa-solid fa-microphone text-3xl mb-1";
+            micText.innerText = "Tap & Speak";
+            pulseRing.classList.add('opacity-0');
+        }
+
+        function handleVoiceIntent(text) {
+            setTimeout(() => {
+                if (text.includes('driver') || text.includes('car owner') || text.includes('drive')) {
+                    outputBox.innerHTML += "<br><span class='text-emerald-700 font-bold'>➔ Routing to: Drivers & Car Services</span>";
+                    setTimeout(() => alert("Redirecting to Drivers Directory"), 1000);
+                } 
+                else if (text.includes('community hall') || text.includes('marriage')) {
+                    outputBox.innerHTML += "<br><span class='text-emerald-700 font-bold'>➔ Opening Community Halls</span>";
+                    setTimeout(() => navigateTo('community-halls'), 1000);
+                } 
+                else if (text.includes('food') || text.includes('langar')) {
+                    outputBox.innerHTML += "<br><span class='text-emerald-700 font-bold'>➔ Opening Food Services</span>";
+                    setTimeout(() => navigateTo('food-service'), 1000);
+                }
+                else if (text.includes('helpline') || text.includes('emergency')) {
+                    outputBox.innerHTML += "<br><span class='text-emerald-700 font-bold'>➔ Opening Helplines Hub</span>";
+                    setTimeout(() => openModal('helplineModal'), 1000);
+                }
+                else {
+                    outputBox.innerHTML += `<br><span class='text-amber-700'>No direct match for "${text}". Try saying "I need a driver".</span>`;
+                }
+            }, 500);
+        }
+
+        function navigateTo(section) {
+            const modal = document.getElementById('appModal');
+            const content = document.getElementById('modalContent');
+            
+            if(section === 'community-halls') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-2'><i class='fa-solid fa-building-columns text-amber-500 mr-2'></i>Community Halls</h3>
+                    <div class='space-y-2 text-xs'>
+                        <div class='p-2.5 bg-slate-50 rounded-lg border'><b>Maharaja Agrasen Hall</b><br>Capacity: 500 Pax</div>
+                        <div class='p-2.5 bg-slate-50 rounded-lg border'><b>Municipal Seva Bhavan</b><br>Capacity: 200 Pax</div>
+                    </div>
+                `;
+            } else if(section === 'food-service') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-2'><i class='fa-solid fa-utensils text-orange-500 mr-2'></i>Social Food Service</h3>
+                    <div class='space-y-2 text-xs'>
+                        <div class='p-2.5 bg-slate-50 rounded-lg border'><b>Guru Nanak Langar Hall</b><br>Daily Free Meal: 12 PM - 3 PM</div>
+                    </div>
+                `;
+            } else if(section === 'gov-services') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-2'><i class='fa-solid fa-landmark text-blue-500 mr-2'></i>Govt Free Services</h3>
+                    <div class='space-y-2 text-xs'>
+                        <div class='p-2.5 bg-slate-50 rounded-lg border'><b>District Seva Camp</b><br>Aadhaar & Ration Card support</div>
+                    </div>
+                `;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function openModal(type) {
+            const modal = document.getElementById('appModal');
+            const content = document.getElementById('modalContent');
+
+            if(type === 'workerModal') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-3'>Worker / Service Registration</h3>
+                    <form class='space-y-2.5 text-xs' onsubmit='event.preventDefault(); alert("Registered successfully!"); closeModal();'>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Full Name</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Service (e.g., Driver, Plumber)</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Mobile No</label><input type='tel' required class='w-full border rounded-lg p-2'></div>
+                        <button type='submit' class='w-full bg-indigo-600 text-white py-2 rounded-lg font-bold mt-1'>Submit</button>
+                    </form>
+                `;
+            } else if(type === 'businessModal') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-3'>Shop / Business Registration</h3>
+                    <form class='space-y-2.5 text-xs' onsubmit='event.preventDefault(); alert("Business registered!"); closeModal();'>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Business Name</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Business Type (e.g., Car Rental)</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Location</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <button type='submit' class='w-full bg-emerald-600 text-white py-2 rounded-lg font-bold mt-1'>Register</button>
+                    </form>
+                `;
+            } else if(type === 'sevaModal') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-3'>List Free Seva</h3>
+                    <form class='space-y-2.5 text-xs' onsubmit='event.preventDefault(); alert("Seva listed!"); closeModal();'>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Seva Title</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Organizer Name</label><input type='text' required class='w-full border rounded-lg p-2'></div>
+                        <div><label class='block font-medium text-slate-700 mb-1'>Details</label><textarea rows='2' class='w-full border rounded-lg p-2'></textarea></div>
+                        <button type='submit' class='w-full bg-amber-600 text-white py-2 rounded-lg font-bold mt-1'>Publish</button>
+                    </form>
+                `;
+            } else if(type === 'helplineModal') {
+                content.innerHTML = `
+                    <h3 class='text-sm font-bold text-slate-900 mb-3'>All-India Helplines & Portals</h3>
+                    <div class='space-y-2 text-xs'>
+                        <div class='p-2 bg-slate-50 border rounded-lg flex justify-between'><span>Emergency</span><a href='tel:112' class='font-bold text-emerald-600'>112</a></div>
+                        <div class='p-2 bg-slate-50 border rounded-lg flex justify-between'><span>Police</span><a href='tel:100' class='font-bold text-emerald-600'>100</a></div>
+                        <div class='p-2 bg-slate-50 border rounded-lg flex justify-between'><span>Women Helpline</span><a href='tel:1091' class='font-bold text-emerald-600'>1091</a></div>
+                        <div class='p-2 bg-slate-50 border rounded-lg flex justify-between'><span>Govt Portal</span><a href='https://www.india.gov.in' target='_blank' class='font-bold text-indigo-600 underline'>india.gov.in</a></div>
+                    </div>
+                `;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('appModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
